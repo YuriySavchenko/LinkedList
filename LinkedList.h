@@ -36,6 +36,7 @@ public:
     void     deleteElement(int);
     void     printList();
     int      countElements();
+    bool     isEmpty();
 
     // override operator for choosing element by index
 
@@ -257,6 +258,11 @@ T LinkedList<T>::operator[](const int index) {
     // let's return the maximum number as the error code
 
     return RAND_MAX;
+}
+
+template<typename T>
+bool LinkedList<T>::isEmpty() {
+    return !list != nullptr;
 }
 
 
