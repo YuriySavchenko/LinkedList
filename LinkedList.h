@@ -262,7 +262,11 @@ T LinkedList<T>::operator[](const int index) {
 
 template<typename T>
 bool LinkedList<T>::isEmpty() {
-    return !list != nullptr;
+    if (!list)
+        return true;
+
+    else
+        return false;
 }
 
 
