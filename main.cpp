@@ -11,6 +11,8 @@ int main() {
     for (int i=20; i < 30; i++)
         list_new.addElement(i);
 
+    std::cout << "List empty result: " << list.isEmpty() << std::endl;
+
     list.printList();
     list_new.printList();
 
