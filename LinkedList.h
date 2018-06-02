@@ -21,8 +21,8 @@ private:
 private:
     // variables for save pointer on the List and save count of elements
 
-    Node *list;
-    int count;
+    Node    *LIST;
+    int     COUNT;
 
 public:
     // some methods which allows are working with list
@@ -30,62 +30,134 @@ public:
     LinkedList();
     virtual ~LinkedList();
 
-    void     addElement(T);
-    void     insertElement(T, int);
-    void     deleteElement(T);
-    void     deleteElement(int);
-    void     printList();
-    int      countElements();
-    bool     isEmpty();
+    void    append(const T &);
+    void    append(const LinkedList<T> &);
+    void    insert(int, const T &);
+    void    insert(int, const LinkedList<T> &);
+    void    remove(T);
+    void    remove(int);
+    void    clear();
+    void    print();
 
-    // override operator for choosing element by index
+    bool    isEmpty() const;
 
-    T operator[](const int);
+    // functions for easy access to nodes in lists
+
+    auto    end() const;
+    auto    begin() const;
+
+    // functions which allows known size of list
+
+    int     count() const;
+    int     size() const;
+    int     length() const;
+
+    // methods and overriding operators for access until element
+
+    T       &first();
+    T       &last();
+    T       at(int) const;
+    T       value(int) const;
+    T       &operator[](int);
 };
 
-
-// method which allows add node in top of the list
+// basic constructor of class LinkedList
 
 template<typename T>
-void LinkedList<T>::addElement(T value) {
-    Node *begin = new Node();
-
-    begin->value = value;
-    begin->next = list;
-
-    this->list = begin;
-    this->count++;
+LinkedList<T>::LinkedList() {
+    this->LIST = nullptr;
+    this->COUNT = 0;
 }
 
 // destructor of class LinkedList
 
 template<typename T>
 LinkedList<T>::~LinkedList() {
-    delete [] list;
+    delete [] LIST;
+}
+
+// method which allows append element in top of the list
+
+template<typename T>
+void LinkedList<T>::append(const T &value) {
+    Node *begin = new Node();
+
+    begin->value = value;
+    begin->next = LIST;
+
+    LIST = begin;
+    COUNT++;
+}
+
+// function which allows append another LinkedList in the end of current list
+
+template<typename T>
+void LinkedList<T>::append(const LinkedList<T> &value) {
+    // if another list is empty then we are printing Error
+
+    if (value.isEmpty())
+        std::cerr << "Error! Nothing to insert so as list are empty." << std::endl;
+
+        // if another list is not empty then we can append this list on begin
+
+    else {
+        // create copy of list value
+
+        LinkedList<T> *copy = new LinkedList<double>;
+
+        for (int i=value.length()-1; i >= 0; i--)
+            copy->append(value.at(i));
+
+        // set link last node on the next node of another list as link on the begin node in current list
+
+        copy->end()->next = LIST;
+        LIST = copy->begin();
+
+        // addition count of elements in old list to count of elements in another list
+
+        COUNT += value.count();
+    }
 }
 
 // method which allows insert node in some position without losing ties
 
 template<typename T>
-void LinkedList<T>::insertElement(T value, int index) {
+void LinkedList<T>::insert(int index, const T &value) {
     // if index is less than count of elements in list then we can make insert
 
-    if (index < this->count) {
-        Node *tmp = new Node();
-        Node *begin = list;
+    if (index < this->COUNT) {
+        // if index is equal null then we can make insert in begin of list
 
-        tmp->value = value;
-
-        int key = this->count;
-
-        for (int i = key; i > index; i--) {
-            begin = begin->next;
+        if (index == 0) {
+            append(value);
+            return;
         }
 
-        tmp->next = begin->next;
-        begin->next = tmp;
+        // in other situations we will make insert in some position of list
 
-        this->count++;
+        else {
+            Node *tmp = new Node();
+            tmp->value = value;
+
+            Node *begin = LIST;
+            Node *next = begin->next;
+
+            // look for position in list
+
+            for (int i = 0; i < index-1; i++) {
+                next = next->next;
+                begin = begin->next;
+            }
+
+            // insert value with saves ties
+
+            tmp->next = next;
+            begin->next = tmp;
+
+            // addition count of elements
+
+            COUNT++;
+        }
     }
 
     // if index is greater than count of elements in list then we are printing error
@@ -95,144 +167,235 @@ void LinkedList<T>::insertElement(T value, int index) {
     }
 }
 
+// method which allows insert another list in some position in our list
+
+template<typename T>
+void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
+    // if index is less than count of elements in list then we can make insert
+
+    if (index < this->COUNT) {
+        // if index is equal null then we can make insert on begin
+
+        if (index == 0) {
+            append(value);
+            return;
+        }
+
+        // in other situations we will make insert in some position of list
+
+        else {
+            LinkedList<T> *copy = new LinkedList<T>;
+            Node *begin = LIST;
+            Node *tmp = LIST;
+            Node *next = tmp->next;
+
+            // look for position in list
+
+            for (int i = 0; i < index-1; i++) {
+                next = next->next;
+                tmp = tmp->next;
+            }
+
+            // fill copy list
+
+            for (int i=value.length()-1; i >= 0; i--)
+                copy->append(value.at(i));
+
+            // insert another list with saves ties
+
+            copy->end()->next = next;
+            tmp->next = copy->begin();
+            LIST = begin;
+
+            // addition count of elements in old list to count of elements in another list
+
+            COUNT += value.count();
+        }
+    }
+
+        // if index is greater than count of elements in list then we are printing error
+
+    else {
+        std::cerr << "Error! index must be less than count of elements in list." << std::endl;
+    }
+}
+
+
 // method which allows delete node with some value
 
 template<typename T>
-void LinkedList<T>::deleteElement(T value) {
-    if (list->next == nullptr) {
+void LinkedList<T>::remove(T value) {
+    if (LIST->next == nullptr) {
         std::cerr << "Error! List can't be empty." << std::endl;
         return;
     }
 
-    Node *begin = list;
+    Node *begin = LIST;
 
     // if element is situating in the top node then we are remove this node
 
     if (begin->value == value) {
-        list = list->next;
+        LIST = LIST->next;
 
         delete begin;
-        this->count--;
+        this->COUNT--;
         return;
     }
 
-    Node *end = begin->next;
+    Node *next = begin->next;
 
-    // looking for element in nodes
+    // look for element in nodes
 
-    while (end) {
-        if (end->value == value)
+    while (next) {
+        if (next->value == value)
             break;
 
-        begin = end;
-        end = end->next;
+        begin = next;
+        next = next->next;
     }
 
     // if we can't found element in the nodes then we are printing information about this error
 
-    if (!end)
+    if (!next)
         std::cerr << "Can't remove value! Not match found." << std::endl;
 
     // if we were found element in some node then we are removing this node with saving ways
 
     else {
-        begin->next = end->next;
-        delete end;
-        this->count--;
+        begin->next = next->next;
+        delete next;
+        this->COUNT--;
+    }
+}
+
+// method which allows delete node in the list for some index
+
+template<typename T>
+void LinkedList<T>::remove(int index) {
+    // if index is equal or greater than count elements in list we are print Error
+
+    if (index >= this->COUNT) {
+        std::cerr << "Error! Index must be less than count of elements in list." << std::endl;
+        return;
+    }
+
+        // looking for element in nodes by index and remove it
+
+    else {
+        Node *begin = LIST;
+
+        // if index equal 0 then we are removing element from top node with saving ways
+
+        if (index == 0) {
+            LIST = LIST->next;
+
+            delete begin;
+            this->COUNT--;
+            return;
+        }
+
+        Node *next = begin->next;
+
+        // look for position in list
+
+        for (int i = 1; i < index && next; i++) {
+            begin = next;
+            next = next->next;
+        }
+
+        // remove element from position in list
+
+        begin->next = next->next;
+        delete next;
+        this->COUNT--;
     }
 }
 
 // method which allows counting nodes in list and are returning theirs count
 
 template<typename T>
-int LinkedList<T>::countElements() {
-    return this->count;
-}
-
-// method which allows delete node in the list for some index
-
-template<typename T>
-void LinkedList<T>::deleteElement(int index) {
-    // if index is equal or greater than count elements in list we are print Error
-
-    if (index >= this->count) {
-        std::cerr << "Error! Index must be less than count of elements in list." << std::endl;
-        return;
-    }
-
-    // looking for element in nodes by index and remove it
-
-    else {
-        Node *begin = list;
-
-        // if index equal 0 then we are removing element from top node with saving ways
-
-        if (index == 0) {
-            list = list->next;
-
-            delete begin;
-            this->count--;
-            return;
-        }
-
-        Node *end = begin->next;
-
-        for (int i = 1; i < index && end; i++) {
-            begin = end;
-            end = end->next;
-        }
-
-        begin->next = end->next;
-        delete end;
-        this->count--;
-    }
-}
-
-// basic constructor of class LinkedList
-
-template<typename T>
-LinkedList<T>::LinkedList() {
-    this->list = nullptr;
-    this->count = 0;
+int LinkedList<T>::count() const {
+    return this->COUNT;
 }
 
 // simple method for print list on display
 
 template<typename T>
-void LinkedList<T>::printList() {
-    Node *begin = list;
+void LinkedList<T>::print() {
+    Node *begin = LIST;
 
     // until the node is empty we will be printing their elements from nodes
 
-    std::cout << "[";
+    std::cout << "{ ";
 
     while (begin) {
         std::cout << begin->value;
 
         if (begin->next != nullptr)
-            std::cout << "; ";
+            std::cout << ", ";
 
         begin = begin->next;
     }
 
     // print the transition to a new line
 
-    std::cout << "]";
+    std::cout << " }";
     std::cout << std::endl;
 }
 
-// operator which allows get access until element in list
+// function for monitoring state of list
 
 template<typename T>
-T LinkedList<T>::operator[](const int index) {
+bool LinkedList<T>::isEmpty() const {
+    // if list are empty then we return { true }
+
+    if (!LIST)
+        return true;
+
+    // if list are not empty then we return { false }
+
+    else
+        return false;
+}
+
+// function which allows known size of list
+
+template<typename T>
+int LinkedList<T>::size() const {
+    return this->COUNT;
+}
+
+// functions which return size of list
+
+template<typename T>
+int LinkedList<T>::length() const {
+    return this->COUNT;
+}
+
+// method which allows get access to last element in list
+
+template<typename T>
+auto LinkedList<T>::end() const {
+    Node *begin = LIST;
+
+    while (begin->next)
+        begin = begin->next;
+
+    return begin;
+}
+
+// method which allows get access until element in one of the nodes in list
+
+template<typename T>
+T LinkedList<T>::at(int index) const {
     // if we will have been had problems with our list we can easily print Error on display
 
     try {
 
         // we can accessed to element in list if index are less than count of elements
 
-        if (index < this->count) {
-            Node *begin = list;
+        if (index < this->COUNT) {
+            Node *begin = LIST;
 
             int key = 0;
 
@@ -246,7 +409,7 @@ T LinkedList<T>::operator[](const int index) {
             }
         }
 
-        // if index is greater than count of elements in list we are printing Error
+            // if index is greater than count of elements in list we are printing Error
 
         else
             throw index;
@@ -260,13 +423,46 @@ T LinkedList<T>::operator[](const int index) {
     return RAND_MAX;
 }
 
-template<typename T>
-bool LinkedList<T>::isEmpty() {
-    if (!list)
-        return true;
+// exactly the same method as previous method { T LinkedList<T>::at(int index) }
 
-    else
-        return false;
+template<typename T>
+T LinkedList<T>::value(int index) const {
+    return at(index);
+}
+
+// operator which allows get access until element in list via { T LinkedList<T>::at(int index) }
+
+template<typename T>
+T &LinkedList<T>::operator[](int index) {
+    return at(index);
+}
+
+// method which allows get access to the first element in list
+
+template<typename T>
+auto LinkedList<T>::begin() const {
+    return this->LIST;
+}
+
+// method which allows you to free up memory and delete all elements in array
+
+template<typename T>
+void LinkedList<T>::clear() {
+    delete [] LIST;
+}
+
+// method which allows return first element in list
+
+template<typename T>
+T &LinkedList<T>::first() {
+    return this->value(0);
+}
+
+// method which allows return last element in list
+
+template<typename T>
+T &LinkedList<T>::last() {
+    return this->value(COUNT-1);
 }
 
 

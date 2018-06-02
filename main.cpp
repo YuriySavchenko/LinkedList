@@ -5,16 +5,17 @@ int main() {
     LinkedList<double> list;
     LinkedList<double> list_new;
 
-    for (int i=1; i < 10; i++)
-        list.addElement(i);
+    for (int i=1; i < 11; i++)
+        list.append(i);
 
-    for (int i=20; i < 30; i++)
-        list_new.addElement(i);
+    for (int i=21; i < 31; i++)
+        list_new.append(i);
 
-    std::cout << "List empty result: " << list.isEmpty() << std::endl;
-
-    list.printList();
-    list_new.printList();
+    list.print();
+    list_new.print();
+    list.insert(2, list_new);
+    list.print();
+    list_new.print();
 
     return 0;
 }
