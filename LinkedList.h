@@ -11,7 +11,7 @@ template <typename T>
 class LinkedList {
 
 private:
-    // typical structure with two lines
+    /* typical structure with two lines */
 
     struct Node {
         T value;
@@ -19,15 +19,16 @@ private:
     };
 
 private:
-    // variables for save pointer on the List and save count of elements
+    /* variables for save pointer on the List and save count of elements */
 
     Node    *LIST;
     int     COUNT;
 
 public:
-    // some methods which allows are working with list
+    /* some methods which allow are working with list */
 
     LinkedList();
+    LinkedList(int, T);
     virtual ~LinkedList();
 
     void    append(const T &);
@@ -35,24 +36,24 @@ public:
     void    insert(int, const T &);
     void    insert(int, const LinkedList<T> &);
     void    remove(T);
-    void    remove(int);
+    void    remove(const int);
     void    clear();
     void    print();
 
     bool    isEmpty() const;
 
-    // functions for easy access to nodes in lists
+    /* functions for easy access to nodes in lists */
 
     auto    end() const;
     auto    begin() const;
 
-    // functions which allows known size of list
+    /* functions which allow known size of list */
 
     int     count() const;
     int     size() const;
     int     length() const;
 
-    // methods and overriding operators for access until element
+    /* methods and overriding operators for access to element */
 
     T       &first();
     T       &last();
@@ -61,7 +62,7 @@ public:
     T       &operator[](int);
 };
 
-// basic constructor of class LinkedList
+/* basic constructor of class LinkedList */
 
 template<typename T>
 LinkedList<T>::LinkedList() {
@@ -69,14 +70,29 @@ LinkedList<T>::LinkedList() {
     this->COUNT = 0;
 }
 
-// destructor of class LinkedList
+/* custom constructor for fill list by values */
+
+template<typename T>
+LinkedList<T>::LinkedList(int count, T value) {
+    this->LIST = nullptr;
+    this->COUNT = 0;
+    
+    int counter = count;
+
+    for (int i=0; i < counter; i++)
+        append(value);
+}
+
+/* destructor of class LinkedList */
 
 template<typename T>
 LinkedList<T>::~LinkedList() {
-    delete [] LIST;
+    // invoke function for delete all elements in list
+
+    this->clear();
 }
 
-// method which allows append element in top of the list
+/* method which allows to append element in top of the list */
 
 template<typename T>
 void LinkedList<T>::append(const T &value) {
@@ -89,7 +105,7 @@ void LinkedList<T>::append(const T &value) {
     COUNT++;
 }
 
-// function which allows append another LinkedList in the end of current list
+/* function which allows to append another LinkedList in the end of current list */
 
 template<typename T>
 void LinkedList<T>::append(const LinkedList<T> &value) {
@@ -119,7 +135,7 @@ void LinkedList<T>::append(const LinkedList<T> &value) {
     }
 }
 
-// method which allows insert node in some position without losing ties
+/* method which allows insert node in some position without losing ties */
 
 template<typename T>
 void LinkedList<T>::insert(int index, const T &value) {
@@ -133,7 +149,7 @@ void LinkedList<T>::insert(int index, const T &value) {
             return;
         }
 
-        // in other situations we will make insert in some position of list
+        // in other cases we will make insert in some position of list
 
         else {
             Node *tmp = new Node();
@@ -160,14 +176,14 @@ void LinkedList<T>::insert(int index, const T &value) {
         }
     }
 
-    // if index is greater than count of elements in list then we are printing error
+    // if index is greater than count of elements in list then we are printing Error
 
     else {
         std::cerr << "Error! index must be less than count of elements in list." << std::endl;
     }
 }
 
-// method which allows insert another list in some position in our list
+/* method which allows insert another list in some position at our list */
 
 template<typename T>
 void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
@@ -181,7 +197,7 @@ void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
             return;
         }
 
-        // in other situations we will make insert in some position of list
+        // in other cases we will make insert in some position of the list
 
         else {
             LinkedList<T> *copy = new LinkedList<T>;
@@ -213,7 +229,7 @@ void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
         }
     }
 
-        // if index is greater than count of elements in list then we are printing error
+        // if index is greater than count of elements in list then we are printing Error
 
     else {
         std::cerr << "Error! index must be less than count of elements in list." << std::endl;
@@ -221,11 +237,11 @@ void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
 }
 
 
-// method which allows delete node with some value
+/* method which allows delete node with some value */
 
 template<typename T>
 void LinkedList<T>::remove(T value) {
-    if (LIST->next == nullptr) {
+    if (LIST == nullptr) {
         std::cerr << "Error! List can't be empty." << std::endl;
         return;
     }
@@ -268,10 +284,10 @@ void LinkedList<T>::remove(T value) {
     }
 }
 
-// method which allows delete node in the list for some index
+/* method which allows delete node in the list for some index */
 
 template<typename T>
-void LinkedList<T>::remove(int index) {
+void LinkedList<T>::remove(const int index) {
     // if index is equal or greater than count elements in list we are print Error
 
     if (index >= this->COUNT) {
@@ -311,14 +327,14 @@ void LinkedList<T>::remove(int index) {
     }
 }
 
-// method which allows counting nodes in list and are returning theirs count
+/* method which allows counting nodes in list and are returning theirs count */
 
 template<typename T>
 int LinkedList<T>::count() const {
     return this->COUNT;
 }
 
-// simple method for print list on display
+/* simple method for print list on display */
 
 template<typename T>
 void LinkedList<T>::print() {
@@ -343,7 +359,7 @@ void LinkedList<T>::print() {
     std::cout << std::endl;
 }
 
-// function for monitoring state of list
+/* function for monitoring state of list */
 
 template<typename T>
 bool LinkedList<T>::isEmpty() const {
@@ -358,21 +374,21 @@ bool LinkedList<T>::isEmpty() const {
         return false;
 }
 
-// function which allows known size of list
+/* function which allows known size of list */
 
 template<typename T>
 int LinkedList<T>::size() const {
     return this->COUNT;
 }
 
-// functions which return size of list
+/* functions which return size of list */
 
 template<typename T>
 int LinkedList<T>::length() const {
     return this->COUNT;
 }
 
-// method which allows get access to last element in list
+/* method which allows get access to last element in list */
 
 template<typename T>
 auto LinkedList<T>::end() const {
@@ -384,7 +400,7 @@ auto LinkedList<T>::end() const {
     return begin;
 }
 
-// method which allows get access until element in one of the nodes in list
+/* method which allows get access until element in one of the nodes in list */
 
 template<typename T>
 T LinkedList<T>::at(int index) const {
@@ -423,42 +439,55 @@ T LinkedList<T>::at(int index) const {
     return RAND_MAX;
 }
 
-// exactly the same method as previous method { T LinkedList<T>::at(int index) }
+/* exactly the same method as previous method { T LinkedList<T>::at(int index) } */
 
 template<typename T>
 T LinkedList<T>::value(int index) const {
     return at(index);
 }
 
-// operator which allows get access until element in list via { T LinkedList<T>::at(int index) }
+/* operator which allows get access until element in list via { T LinkedList<T>::at(int index) } */
 
 template<typename T>
 T &LinkedList<T>::operator[](int index) {
     return at(index);
 }
 
-// method which allows get access to the first element in list
+/* method which allows get access to the first element in list */
 
 template<typename T>
 auto LinkedList<T>::begin() const {
     return this->LIST;
 }
 
-// method which allows you to free up memory and delete all elements in array
+/* method which allows you to free up memory and delete all elements in array */
 
 template<typename T>
 void LinkedList<T>::clear() {
-    delete [] LIST;
+    if (this->isEmpty())
+        return;
+
+    Node *pointer = LIST;
+    Node *trash;
+
+    // while pointer on the LIST isn't empty we'll be remove nodes
+
+    while (pointer)
+    {
+        trash = pointer;
+        pointer = pointer->next;
+        delete [] trash;
+    }
 }
 
-// method which allows return first element in list
+/* method which allows return first element in list */
 
 template<typename T>
 T &LinkedList<T>::first() {
     return this->value(0);
 }
 
-// method which allows return last element in list
+/* method which allows return last element in list */
 
 template<typename T>
 T &LinkedList<T>::last() {
