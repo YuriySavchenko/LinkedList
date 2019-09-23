@@ -29,7 +29,7 @@ public:
 
     LinkedList();
     LinkedList(int, T);
-    virtual ~LinkedList();
+    ~LinkedList();
 
     void    append(const T &);
     void    append(const LinkedList<T> &);
@@ -37,6 +37,7 @@ public:
     void    insert(int, const LinkedList<T> &);
     void    remove(T);
     void    remove(const int);
+    void    reverse();
     void    clear();
     void    print();
 
@@ -327,6 +328,30 @@ void LinkedList<T>::remove(const int index) {
     }
 }
 
+/* method which allows make reverse the current list */
+
+template <typename T>
+void LinkedList<T>::reverse() {
+    Node *reverse = nullptr;
+
+    int reverseCount = size();
+
+    while (LIST) {
+        Node *begin = new Node();
+        begin->value = LIST->value;
+        begin->next = reverse;
+
+        reverse = begin;
+
+        LIST = LIST->next;  
+    }
+
+    clear();
+
+    LIST = reverse;
+    COUNT = reverseCount;
+}
+
 /* method which allows counting nodes in list and are returning theirs count */
 
 template<typename T>
@@ -478,6 +503,8 @@ void LinkedList<T>::clear() {
         pointer = pointer->next;
         delete [] trash;
     }
+
+    COUNT = 0;
 }
 
 /* method which allows return first element in list */
