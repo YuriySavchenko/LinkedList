@@ -2,11 +2,16 @@
 #import "LinkedList.h"
 
 int main() {
-    LinkedList<double> list(5, 2.3);
-    LinkedList<double> list_new(17, 45.2);
+    LinkedList<double> list;
+
+    list.append(1);
+    list.append(2);
+    list.append(3);
+    list.append(4);
 
     list.print();
-    list_new.print();
+    list.reverse();
+    list.print();
 
     return 0;
 }
