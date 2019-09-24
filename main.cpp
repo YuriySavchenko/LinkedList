@@ -10,7 +10,7 @@ int main() {
     list.append(4);
 
     list.print();
-    list.reverse();
+    list.recursive_reverse();
     list.print();
 
     return 0;
