@@ -2,8 +2,8 @@
 // Created by yuriy on 30.05.18.
 //
 
-#ifndef LINKEDLIST_LINKEDLIST_H
-#define LINKEDLIST_LINKEDLIST_H
+#ifndef LINKEDHEAD_LINKEDHEAD_H
+#define LINKEDHEAD_LINKEDHEAD_H
 
 #include <iostream>
 
@@ -14,14 +14,14 @@ private:
     /* typical structure with two lines */
 
     struct Node {
-        T value;
         Node *next;
+        T value;
     };
 
 private:
     /* variables for save pointer on the List and save count of elements */
 
-    Node    *LIST;
+    Node    *HEAD;
     int     COUNT;
 
 public:
@@ -36,7 +36,7 @@ public:
     void    insert(int, const T &);
     void    insert(int, const LinkedList<T> &);
     void    remove(T);
-    void    remove(const int);
+    void    remove(const int &);
     void    reverse();
     void    clear();
     void    print();
@@ -67,7 +67,7 @@ public:
 
 template<typename T>
 LinkedList<T>::LinkedList() {
-    this->LIST = nullptr;
+    this->HEAD = nullptr;
     this->COUNT = 0;
 }
 
@@ -75,7 +75,7 @@ LinkedList<T>::LinkedList() {
 
 template<typename T>
 LinkedList<T>::LinkedList(int count, T value) {
-    this->LIST = nullptr;
+    this->HEAD = nullptr;
     this->COUNT = 0;
     
     int counter = count;
@@ -100,9 +100,9 @@ void LinkedList<T>::append(const T &value) {
     Node *begin = new Node();
 
     begin->value = value;
-    begin->next = LIST;
+    begin->next = HEAD;
 
-    LIST = begin;
+    HEAD = begin;
     COUNT++;
 }
 
@@ -127,8 +127,8 @@ void LinkedList<T>::append(const LinkedList<T> &value) {
 
         // set link last node on the next node of another list as link on the begin node in current list
 
-        copy->end()->next = LIST;
-        LIST = copy->begin();
+        copy->end()->next = HEAD;
+        HEAD = copy->begin();
 
         // addition count of elements in old list to count of elements in another list
 
@@ -156,7 +156,7 @@ void LinkedList<T>::insert(int index, const T &value) {
             Node *tmp = new Node();
             tmp->value = value;
 
-            Node *begin = LIST;
+            Node *begin = HEAD;
             Node *next = begin->next;
 
             // look for position in list
@@ -202,8 +202,8 @@ void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
 
         else {
             LinkedList<T> *copy = new LinkedList<T>;
-            Node *begin = LIST;
-            Node *tmp = LIST;
+            Node *begin = HEAD;
+            Node *tmp = HEAD;
             Node *next = tmp->next;
 
             // look for position in list
@@ -222,7 +222,7 @@ void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
 
             copy->end()->next = next;
             tmp->next = copy->begin();
-            LIST = begin;
+            HEAD = begin;
 
             // addition count of elements in old list to count of elements in another list
 
@@ -242,17 +242,17 @@ void LinkedList<T>::insert(int index, const LinkedList<T> &value) {
 
 template<typename T>
 void LinkedList<T>::remove(T value) {
-    if (LIST == nullptr) {
+    if (HEAD == nullptr) {
         std::cerr << "Error! List can't be empty." << std::endl;
         return;
     }
 
-    Node *begin = LIST;
+    Node *begin = HEAD;
 
     // if element is situating in the top node then we are remove this node
 
     if (begin->value == value) {
-        LIST = LIST->next;
+        HEAD = HEAD->next;
 
         delete begin;
         this->COUNT--;
@@ -288,7 +288,7 @@ void LinkedList<T>::remove(T value) {
 /* method which allows delete node in the list for some index */
 
 template<typename T>
-void LinkedList<T>::remove(const int index) {
+void LinkedList<T>::remove(const int &index) {
     // if index is equal or greater than count elements in list we are print Error
 
     if (index >= this->COUNT) {
@@ -299,12 +299,12 @@ void LinkedList<T>::remove(const int index) {
         // looking for element in nodes by index and remove it
 
     else {
-        Node *begin = LIST;
+        Node *begin = HEAD;
 
         // if index equal 0 then we are removing element from top node with saving ways
 
         if (index == 0) {
-            LIST = LIST->next;
+            HEAD = HEAD->next;
 
             delete begin;
             this->COUNT--;
@@ -332,24 +332,16 @@ void LinkedList<T>::remove(const int index) {
 
 template <typename T>
 void LinkedList<T>::reverse() {
-    Node *reverse = nullptr;
+    Node *REVERSE = nullptr;
 
-    int reverseCount = size();
-
-    while (LIST) {
-        Node *begin = new Node();
-        begin->value = LIST->value;
-        begin->next = reverse;
-
-        reverse = begin;
-
-        LIST = LIST->next;  
+    while (HEAD != nullptr) {
+        Node *begin = HEAD->next;
+        HEAD->next = REVERSE;
+        REVERSE = HEAD;
+        HEAD = begin;  
     }
 
-    clear();
-
-    LIST = reverse;
-    COUNT = reverseCount;
+    HEAD = REVERSE;
 }
 
 /* method which allows counting nodes in list and are returning theirs count */
@@ -363,7 +355,7 @@ int LinkedList<T>::count() const {
 
 template<typename T>
 void LinkedList<T>::print() {
-    Node *begin = LIST;
+    Node *begin = HEAD;
 
     // until the node is empty we will be printing their elements from nodes
 
@@ -390,7 +382,7 @@ template<typename T>
 bool LinkedList<T>::isEmpty() const {
     // if list are empty then we return { true }
 
-    if (!LIST)
+    if (!HEAD)
         return true;
 
     // if list are not empty then we return { false }
@@ -417,7 +409,7 @@ int LinkedList<T>::length() const {
 
 template<typename T>
 auto LinkedList<T>::end() const {
-    Node *begin = LIST;
+    Node *begin = HEAD;
 
     while (begin->next)
         begin = begin->next;
@@ -436,7 +428,7 @@ T LinkedList<T>::at(int index) const {
         // we can accessed to element in list if index are less than count of elements
 
         if (index < this->COUNT) {
-            Node *begin = LIST;
+            Node *begin = HEAD;
 
             int key = 0;
 
@@ -482,7 +474,7 @@ T &LinkedList<T>::operator[](int index) {
 
 template<typename T>
 auto LinkedList<T>::begin() const {
-    return this->LIST;
+    return this->HEAD;
 }
 
 /* method which allows you to free up memory and delete all elements in array */
@@ -492,10 +484,10 @@ void LinkedList<T>::clear() {
     if (this->isEmpty())
         return;
 
-    Node *pointer = LIST;
+    Node *pointer = HEAD;
     Node *trash;
 
-    // while pointer on the LIST isn't empty we'll be remove nodes
+    // while pointer on the HEAD isn't empty we'll be remove nodes
 
     while (pointer)
     {
@@ -522,4 +514,4 @@ T &LinkedList<T>::last() {
 }
 
 
-#endif //LINKEDLIST_LINKEDLIST_H
+#endif //LINKEDHEAD_LINKEDHEAD_H
