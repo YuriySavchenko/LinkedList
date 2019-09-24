@@ -2,8 +2,8 @@
 // Created by yuriy on 30.05.18.
 //
 
-#ifndef LINKEDHEAD_LINKEDHEAD_H
-#define LINKEDHEAD_LINKEDHEAD_H
+#ifndef LINKEDLIST_LINKEDLIST_H
+#define LINKEDLIST_LINKEDLIST_H
 
 #include <iostream>
 
@@ -38,6 +38,7 @@ public:
     void    remove(T);
     void    remove(const int &);
     void    reverse();
+    void    recursive_reverse();
     void    clear();
     void    print();
 
@@ -61,6 +62,9 @@ public:
     T       at(int) const;
     T       value(int) const;
     T       &operator[](int);
+
+private:
+    void recursive_traverse(Node *, Node *);
 };
 
 /* basic constructor of class LinkedList */
@@ -342,6 +346,27 @@ void LinkedList<T>::reverse() {
     }
 
     HEAD = REVERSE;
+}
+
+/* additional method for traversing the list */
+
+template <typename T>
+void LinkedList<T>::recursive_traverse(Node *previous, Node *current) {
+    if (current != nullptr) {
+        recursive_traverse(current, current->next);
+        current->next = previous;
+    }
+
+    else {
+        HEAD = previous;
+    }
+}
+
+/* method which allows make reverse the current list via recursion */
+
+template <typename T>
+void LinkedList<T>::recursive_reverse() {
+    recursive_traverse(nullptr, HEAD);
 }
 
 /* method which allows counting nodes in list and are returning theirs count */
